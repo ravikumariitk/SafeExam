@@ -357,15 +357,21 @@ io.on('connection', (socket) => {
         console.log("Answer is already marked as partial");
         return;
       }
-      const correctMarks = Number(question.correctMarks || 0);
-      const incorrectMarks = Number(question.incorrectMarks || 0);
-      const partialMarks = Number(question.partialMarks || 0);
-      const oldScore = Number(answer.marks|| 0);
+      console.log(question.correctMarks)
+      console.log(question.incorrectMarks)
+      console.log(question.partialMarks)
+      const correctMarks = Number(question.correctMarks);
+      const incorrectMarks = Number(question.incorrectMarks);
+      const partialMarks = Number(question.partialMarks);
+      const oldScore = Number(answer.marks);
       let newScore = 0;
       if (answer.status === "correct") {
         newScore = oldScore - correctMarks + partialMarks;
       } else if (answer.status === "incorrect") {
         newScore = oldScore - incorrectMarks + partialMarks;
+      }
+      else{
+        newScore = partialMarks;
       }
       answer.status = 'partial';
       answer.marks = newScore;
@@ -378,7 +384,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      ClassScore.scores[roll] = newScore;
+      ClassScore.scores[roll] = ClassScore.scores[roll] + (newScore - oldScore);
       ClassScore.markModified('scores');
       console.log("Updated ClassScore:", ClassScore);
       await ClassScore.save();
@@ -419,6 +425,9 @@ io.on('connection', (socket) => {
       } else if (answer.status === "incorrect") {
         newScore = oldScore - incorrectMarks + correctMarks;
       }
+      else{
+        newScore = correctMarks;
+      }
       answer.status = 'correct';
       answer.marks = newScore;
       response.markModified('answers');
@@ -429,7 +438,7 @@ io.on('connection', (socket) => {
         console.error("ClassScore not found");
         return;
       }
-      ClassScore.scores[roll] = newScore;
+      ClassScore.scores[roll] = ClassScore.scores[roll] + (newScore - oldScore);
       ClassScore.markModified('scores');
       console.log("Updated ClassScore:", ClassScore);
       await ClassScore.save();
@@ -470,6 +479,9 @@ io.on('connection', (socket) => {
       } else if (answer.status === "partial") {
         newScore = oldScore + incorrectMarks - partialMarks;
       }
+      else{
+        newScore = incorrectMarks;
+      }
       answer.status = 'incorrect';
       answer.marks = newScore;
       response.markModified('answers');
@@ -481,7 +493,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      ClassScore.scores[roll] = newScore;
+      ClassScore.scores[roll] = ClassScore.scores[roll] + (newScore - oldScore);
       console.log("Updated ClassScore:", ClassScore);
       ClassScore.markModified('scores');
       await ClassScore.save();
