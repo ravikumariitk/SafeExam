@@ -229,9 +229,15 @@ function TakeQuiz({ email, roll }) {
 
   const handleQuizSubmit = () => {
     if (started) {
-      const Answers = originalIndices.map(
-        (originalIndex) => answers[originalIndex]
-      );
+      let Answers = []
+      if(randomizeQuestionOrder){
+        Answers = originalIndices.map(
+          (originalIndex) => answers[originalIndex]
+        );
+      }else{
+        Answers = answers
+      }
+      console.log("Ans",Answers)
       const toastId = toast.loading("Submitting Quiz...");
       socketRef.current.emit("submit-answers", { id, Answers, email, roll });
       socketRef.current.on("submit-answers-success", () => {

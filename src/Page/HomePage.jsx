@@ -109,6 +109,7 @@ function HomePage({ email }) {
   }
 
   const handleSave = (quiz) => {
+    console.log(quiz)
     socketRef.current.emit("edit-quiz", { quiz });
     const id = toast.loading("Updating your quiz...");
     socketRef.current.on("edit-quiz-success", () => {
@@ -147,7 +148,7 @@ function HomePage({ email }) {
               <p>id: {quiz.id}</p>
               <div style={styles.batch}>
                 <span style={styles.batchItem}>
-                  {quiz.answerKeyReleased
+                  {quiz.ansKeyReleased
                     ? "Anskey Released"
                     : "AnsKey Pending"}
                 </span>
@@ -240,7 +241,7 @@ function HomePage({ email }) {
           </p>
           <p>
             <strong>Answer Key:</strong>{" "}
-            {selectedQuiz.answerKeyReleased ? "Released" : "Pending"}
+            {selectedQuiz.ansKeyReleased ? "Released" : "Pending"}
           </p>
           <p>
             <strong>Results:</strong>{" "}
@@ -331,7 +332,7 @@ function HomePage({ email }) {
             />
           </h2>
           <p>
-            <strong>Quiz ID:</strong>{" "}
+            <strong>Quiz ID:</strong>{editQuiz.id}
           </p>
           <p>
             <strong>Instructions:</strong>
@@ -385,12 +386,12 @@ function HomePage({ email }) {
           <p>
             <strong>Proctoring:</strong>
             <input
-              type="checkbox"
-              checked={editQuiz.proctoring}
-              onChange={(e) => {
-                editQuiz.proctoring = e.target.value;
-              }}
-            />
+            type="checkbox"
+            defaultChecked={editQuiz.proctoring}
+            onChange={(e) => {
+              editQuiz.proctoring = e.target.checked;
+            }}
+          />
           </p>
           <p>
             <strong>Display Mode:</strong>
@@ -409,11 +410,9 @@ function HomePage({ email }) {
             <strong>Allow Multiple Submissionss:</strong>
             <input
               type="checkbox"
-              name=""
-              id=""
               defaultChecked={editQuiz.allowMultipleSubmissions}
               onChange={(e) => {
-                editQuiz.allowMultipleSubmissions = e.target.value;
+                editQuiz.allowMultipleSubmissions = e.target.checked;
               }}
             />
           </p>
@@ -425,7 +424,8 @@ function HomePage({ email }) {
               id=""
               defaultChecked={editQuiz.randomizeQuestionOrder}
               onChange={(e) => {
-                editQuiz.randomizeQuestionOrder = e.target.value;
+                editQuiz.randomizeQuestionOrder = e.target.checked;
+
               }}
             />
           </p>
@@ -437,7 +437,7 @@ function HomePage({ email }) {
               id=""
               defaultChecked={editQuiz.shuffleOptions}
               onChange={(e) => {
-                editQuiz.shuffleOptions = e.target.value;
+                editQuiz.shuffleOptions = e.target.checked;
               }}
             />
           </p>
@@ -449,7 +449,7 @@ function HomePage({ email }) {
               id=""
               defaultChecked={editQuiz.passwordProtection}
               onChange={(e) => {
-                editQuiz.passwordProtection = e.target.value;
+                editQuiz.passwordProtection = e.target.checked;
               }}
             />
           </p>
@@ -457,7 +457,7 @@ function HomePage({ email }) {
             <strong>Password:</strong>
             <input
               type="text"
-              defaultChecked={editQuiz.password}
+              defaultValue={editQuiz.password}
               onChange={(e) => {
                 editQuiz.password = e.target.value;
               }}
@@ -511,7 +511,7 @@ function HomePage({ email }) {
                     type="number"
                     name=""
                     id=""
-                    defaultChecked={question.incorrectMarks}
+                    defaultValue={question.incorrectMarks}
                     onChange={(e) => {
                       editQuiz.questions[idx].incorrectMarks = e.target.value;
                     }}

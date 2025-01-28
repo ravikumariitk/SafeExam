@@ -163,7 +163,7 @@ io.on('connection', (socket) => {
     const user = await User.findOne({ email: email })
     console.log(user);
 
-    if (!response.allowMultipleSubmissions && user.quiz.includes(id)) {
+    if (!response.allowMultipleSubmissions && user && user.quiz.includes(id)) {
       socket.emit('get-quiz-completed')
     }
     else socket.emit('get-quiz-response', response)
@@ -222,6 +222,7 @@ io.on('connection', (socket) => {
         answers: answers
       })
       await Quiz.updateOne({ id: id }, { $set: { ansKeyReleased: true } });
+      ansKey.markModified('ansKeyReleased');
       await ansKey.save().then(() => {
       socket.emit('ans-key-success');
       }).catch((err) => {
@@ -534,11 +535,10 @@ io.on('connection', (socket) => {
 
   socket.on('edit-quiz', async ({ quiz }) => {
     try {
-      const quizId = quiz.id; // Assuming `quiz.id` is the correct identifier
-  
+      const quizId = quiz.id;
       const result = await Quiz.updateOne(
-        { id: quizId }, // Match by ID
-        { $set: quiz }  // Update fields
+        { id: quizId },
+        { $set: quiz }
       );
   
       if (result.matchedCount > 0) {

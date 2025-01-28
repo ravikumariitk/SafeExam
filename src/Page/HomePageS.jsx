@@ -108,8 +108,26 @@ function HomePage({ email , role}) {
   }
   const getIndex = (id, index,option) => {
     const idx = ans.findIndex((quiz) => quiz.id === id); 
+    console.log(ans[idx])
     console.log(idx);
-    return Object.values(ans[idx].answers[index]).includes(option)?"(Choosen)" :"";
+    if(ans[idx].answers[index]) return Object.values(ans[idx].answers[index]).includes(option)?"(Choosen)" :"";
+  }
+  const getObj = (id, index) => {
+    const idx = ans.findIndex((quiz) => quiz.id === id); 
+    console.log(ans[idx])
+    console.log(idx);
+    if(ans[idx].answers[index]){
+      console.log(ans[idx].answers[index])
+      ans[idx].answers[index].score = "";
+      ans[idx].answers[index].status = "";
+      let result = ""
+      Object.values(ans[idx].answers[index]).forEach((value) => {
+          result+=value;
+      })
+      
+      console.log(result)
+      return result
+    }
   }
   return (
     <div style={styles.container}>
@@ -138,7 +156,7 @@ function HomePage({ email , role}) {
               <p>id: {quiz.id}</p>
               <div style={styles.batch}>
                 <span style={styles.batchItem}>
-                  {quiz.answerKeyReleased
+                  {quiz.ansKeyReleased
                     ? "Anskey Released"
                     : "AnsKey Pending"}
                 </span>
@@ -204,6 +222,15 @@ function HomePage({ email , role}) {
                         </div>
                       ))}
                     </div>
+                  </>
+                )}
+                 {question.type === "subjective" && (
+                  <>
+                  <textarea name="" id="" style={{
+                    width : "100%",
+                  }}
+                  readOnly
+                  >{getObj(selectedQuiz.id, idx)}</textarea>
                   </>
                 )}
               </li>

@@ -81,11 +81,14 @@ function Response() {
   }
 
 
-  function getOptionBoxColor(answer, correctOption, partialOption) {
-    if(Object.values(answer).includes(correctOption)) return '#88E788'
+  function getOptionBoxColor(answer, correctOption) {
+    if(answer){
+    console.log(answer)
+    if(Object.values(answer).includes(correctOption)) return '#88E788'}
     return '#ffffc5'
   }
   function subjective(obj){
+    if(!obj) return ''
     const array = []
     obj.score = ''
     obj.status = ""
@@ -115,15 +118,8 @@ function Response() {
           <div style={styles.name}>Roll No.: {ansEle.roll}</div>
           {ansEle.videoLink && (
             <div>
-              <h4>Video Response:</h4>
-              <video
-                src={ansEle.videoLink}
-                controls
-                style={styles.video}
-              >
-                Your browser does not support the video tag.
-              </video>
-              <a href={ansEle.videoLink}>Click here to get video</a>
+              
+              <a href={ansEle.videoLink} target = "_blank">Click here to get video</a>
             </div>
           )}
           {questionData.map((quesEle, idx) => (

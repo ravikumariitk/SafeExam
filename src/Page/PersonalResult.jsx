@@ -51,10 +51,11 @@ function PersonalResult({ email }) {
   };
 
   const handleSubjective = (answer) => {
-    answer.status = "";
-    answer.marks = "";
+    const newObj = { ...answer };
+    newObj.status = "";
+    newObj.marks = "";
     let ans = "";
-    for (let key in answer) {
+    for (let key in newObj) {
       ans += answer[key];
     }
     return ans;
