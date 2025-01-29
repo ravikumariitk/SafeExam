@@ -31,6 +31,9 @@ function SignUp() {
       const data = { email: email, password: password };
       socketRef.current.emit("sign-up", data);
       const loadingToastId = toast.loading("Signing up...");
+       setTimeout(() => {
+                  toast.dismiss(loadingToastId);
+                }, 5000);
       socketRef.current.on("sign-up-success", () => {
         toast.success("Signed Up successfully.", { id: loadingToastId });
         navigate("/home", { state: { email: email } });

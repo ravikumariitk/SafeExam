@@ -171,6 +171,9 @@ function TakeQuiz({ email, roll }) {
 
   const handleSubmit = () => {
     const toastId = toast.loading("Fetching Quiz Data ...");
+     setTimeout(() => {
+                toast.dismiss(toastId);
+              }, 5000);
     socketRef.current.emit("get-quiz", { id, email });
     socketRef.current.on("get-quiz-completed", () => {
       toast.error("Quiz is Attempted, Multiple submissions are not allowed", {
@@ -239,6 +242,9 @@ function TakeQuiz({ email, roll }) {
       }
       console.log("Ans",Answers)
       const toastId = toast.loading("Submitting Quiz...");
+       setTimeout(() => {
+                  toast.dismiss(toastId);
+                }, 5000);
       socketRef.current.emit("submit-answers", { id, Answers, email, roll });
       socketRef.current.on("submit-answers-success", () => {
         toast.success("Your quiz has been submitted!", { id: toastId });
@@ -308,6 +314,7 @@ function TakeQuiz({ email, roll }) {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [timer]);
+
   function getTimeValue() {
     const curr = new Date();
     const start = new Date(startTime);
@@ -573,7 +580,7 @@ function TakeQuiz({ email, roll }) {
 
 const styles = {
   container: {
-    width: "80%",
+    width: "100%",
     margin: "20px auto",
     padding: "20px",
     backgroundColor: "#f9f9f9",

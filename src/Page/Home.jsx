@@ -23,6 +23,19 @@ function Home() {
   const [role, setRole] = useState('');
   const socketRef = useRef(null);
   const [data,setData] = useState();
+  const[sideBar, setSideBar] = useState(window.innerWidth > 768)
+ 
+  useEffect(() => {
+    const handleResize = () => {
+      setSideBar(window.innerWidth > 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   useEffect(() => {
     async function init() {
       socketRef.current = await initSocket();
@@ -65,7 +78,17 @@ function Home() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.sidebar}>
+      <button
+          onClick={() => setSideBar(!sideBar)}
+         
+        >
+          {sideBar ? "<" : ">"}
+        </button>
+      {sideBar && <div style={styles.sidebar}>
+        <div style={{
+          backgroundColor : "white"
+        }}>
+        </div>
         <h1 style={styles.heading}>Quiz-App</h1>
         <div style={styles.linksContainer}>
           {role === 'Instructor' && (
@@ -231,19 +254,19 @@ function Home() {
                Log Out
               </button>
         </div>
-      </div>
+      </div>}
 
       <div style={styles.contentArea}>
         {current === 'home' && role === 'Instructor' && <HomePage email={email} data={data}/>}
         {current === 'home' && role === 'Student' && <HomePageS email={email} data={data} role = {role}/>}
         {current === 'takequiz' && <TakeQuiz email={email} roll={roll} />}
-        {current === 'result' && <PersonalResult email={email} />}
-        {current === 'get-anskey' && <GetAnsKey />}
+        {current === 'result' && <PersonalResult email={email} data={data.quiz} />}
+        {current === 'get-anskey' && <GetAnsKey data= {data.quiz}/>}
         {current === 'createquiz' && <QuizForm email={email} />}
-        {current === 'release-anskey' && <AnsKey />}
-        {current === 'get-response' && <Response />}
-        {current === 'class-result' && <ClassResult />}
-        {current === 'release-result' && <ReleaseResult />}
+        {current === 'release-anskey' && <AnsKey data={data.quiz} />}
+        {current === 'get-response' && <Response data = {data.quiz} />}
+        {current === 'class-result' && <ClassResult data = {data.quiz} />}
+        {current === 'release-result' && <ReleaseResult data = {data.quiz}/>}
         <Outlet />
       </div>
     </div>

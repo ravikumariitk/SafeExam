@@ -518,6 +518,7 @@ io.on('connection', (socket) => {
 
   socket.on('get-class-result', async ({ id }) => {
     const response = await Result.findOne({ id: id })
+    if(!response) return 
     console.log(response)
     socket.emit('get-class-result-response', {
       marks: (response.scores)
@@ -528,11 +529,13 @@ io.on('connection', (socket) => {
     const ansResponses = await Ans.find({ id: id });
     const questions = await Quiz.find({ id: id });
     console.log(ansResponses)
+    if(ansResponses.length && questions.length){
     socket.emit('get-response-result', {
       question: questions[0].questions,
       answers: ansResponses
     })
-  })
+  }
+})
 
   socket.on('get-quiz-data', async ({ quiz }) => {
   await Quiz.find({ id: { $in: quiz } })
@@ -568,6 +571,13 @@ io.on('connection', (socket) => {
     const answers = await Ans.find({ email: email, id: { $in: ids } });
     console.log(answers)
     socket.emit('get-answer-data-response', { data: answers });
+  })
+
+  socket.on('get-quiz-name', async ({ data }) => {
+    console.log(data)
+    const quiz = await Quiz.find({ id : {$in :  data} });
+    console.log(quiz)
+    socket.emit('get-quiz-name-response',{quiz});
   })
 
 });

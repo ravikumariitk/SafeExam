@@ -94,6 +94,9 @@ const QuizForm = ({email}) => {
     }
     else{
       const loadingToastId = toast.loading("Publishing Quiz...");
+       setTimeout(() => {
+                  toast.dismiss(loadingToastId);
+                }, 5000);
     socketRef.current.emit("publish", { 
       id,
       questions,

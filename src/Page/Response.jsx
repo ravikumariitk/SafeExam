@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { initSocket } from '../socket';
 import toast from 'react-hot-toast';
 
-function Response() {
+function Response({data}) {
   const [id, setId] = useState('');
   const [questionData, setQuestionData] = useState([]);
   const [ansData, setAnsData] = useState([]);
   const socketRef = useRef(null);
-
+  const[quizData,setQuizData] = useState([])
   useEffect(() => {
     async function init() {
       socketRef.current = await initSocket();
@@ -19,7 +19,18 @@ function Response() {
       }
     }
     init();
-
+     setTimeout(() => {
+          socketRef.current.emit("get-quiz-name", {data})
+          const id = toast.loading("Fetching Quiz Data...");
+           setTimeout(() => {
+                      toast.dismiss(id);
+                    }, 5000);
+          socketRef.current.on('get-quiz-name-response', ({quiz}) => {
+          toast.success("Quiz Fetched!", { id: id });
+          setQuizData(quiz)
+          console.log(quiz)
+        })
+        }, 100);
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
@@ -27,6 +38,9 @@ function Response() {
 
   function handleSubmit() {
     const toastId = toast.loading('Fetching Quiz Data...')
+     setTimeout(() => {
+                toast.dismiss(toastId);
+              }, 5000);
     socketRef.current.emit('get-response', { id: id });
     socketRef.current.on('get-response-result', ({ question, answers }) => {
       toast.success("Quiz Data Fatched!",{id:toastId})
@@ -37,6 +51,9 @@ function Response() {
 
   function markPartialCorrect(idx, roll) {
     const toastId = toast.loading('Marking Partially Correct...')
+     setTimeout(() => {
+                toast.dismiss(toastId);
+              }, 5000);
     socketRef.current.emit('partial-correct', {
       id: id,
       roll: roll,
@@ -52,6 +69,9 @@ function Response() {
 
   function markCorrect(idx, roll) {
     const toastId = toast.loading('Marking Correct...')
+     setTimeout(() => {
+                toast.dismiss(toastId);
+              }, 5000);
     socketRef.current.emit('correct', {
       id: id,
       roll: roll,
@@ -67,6 +87,9 @@ function Response() {
 
   function markInCorrect(idx, roll) {
     const toastId = toast.loading('Marking Incorrect...')
+     setTimeout(() => {
+                toast.dismiss(toastId);
+              }, 5000);
     socketRef.current.emit('incorrect', {
       id: id,
       roll: roll,
@@ -98,20 +121,70 @@ function Response() {
     return array.reduce((acc,curr)=>{return acc+curr})
   
   }
+
+  const handleQuizClick = (quiz) => {
+    setId(quiz.id);
+    console.log(id);
+    handleSubmit()
+  }
   return (
     <div style={styles.container}>
       <h2 style={styles.heading}>Class Responses</h2>
       <br />
+
+      <div style={styles.gridContainer}>
+        {quizData.length > 0 ? (
+          quizData.map((quiz, index) => (
+            <div
+              key={index}
+              style={styles.quizContainer}
+              onClick={() => handleQuizClick(quiz)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 12px rgba(0, 0, 0, 0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 8px rgba(0, 0, 0, 0.1)";
+              }}
+            >
+              <h3>{quiz.title}</h3>
+              <p>id: {quiz.id}</p>
+              <div style={styles.batch}>
+                <span style={styles.batchItem}>
+                  {quiz.ansKeyReleased
+                    ? "Anskey Released"
+                    : "AnsKey Pending"}
+                </span>
+                <span style={styles.batchItem}>
+                  {quiz.resultReleased ? "Result Released" : "Result Pending"}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No quizzes available</p>
+        )}
+      </div>
+      
+      <div style = {{textAlign : 'center'}}>
+        <br />
+        OR
+        < br / >
+        <br/>
       <input
         type="text"
         placeholder="Enter Quiz ID"
         onChange={(e) => setId(e.target.value)}
         style={styles.input}
-      /> &nbsp; &nbsp;
+        /> &nbsp; &nbsp;
       <button onClick={handleSubmit} style={styles.button}
       >
         Fetch Responses
       </button>
+       </ div>
 
       {ansData.map((ansEle, ansIndex) => (
         <div key={ansIndex} style={styles.response}>
@@ -189,7 +262,7 @@ function Response() {
 
 const styles = {
   container: {
-    width: '80%',
+    width: '100%',
     margin: '20px auto',
     padding: '20px',
     backgroundColor: '#f9f9f9',
@@ -209,7 +282,35 @@ const styles = {
     border: '1px solid #ccc',
     width: '60%',
   },
-
+ quizContainer: {
+    padding: "20px",
+    backgroundColor: "#ffffff",
+    border: "1px solid #e3e4e6",
+    borderRadius: "12px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    cursor: "pointer",
+  },
+  gridContainer: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+    gap: "20px",
+    marginTop: "20px",
+  },
+  batch: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px",
+    marginTop: "10px",
+  },
+  batchItem: {
+    padding: "6px 12px",
+    backgroundColor: "#e3f7e8",
+    color: "#28a745",
+    borderRadius: "16px",
+    fontSize: "12px",
+    fontWeight: "500",
+  },
   button: {
     backgroundColor: '#000',
     color: 'white',

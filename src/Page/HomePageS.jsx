@@ -34,6 +34,9 @@ function HomePage({ email , role}) {
           setName(data[0].name);
           socketRef.current.emit("get-quiz-data", { quiz: data[0].quiz });
           const toastId = toast.loading("Fetching your data...");
+           setTimeout(() => {
+                      toast.dismiss(toastId);
+                    }, 5000);
           socketRef.current.on("get-quiz-data-failde", () => {
             toast.error("Something went wrong", { id: toastId });
           });
@@ -188,7 +191,7 @@ function HomePage({ email , role}) {
           </p>
           <p>
             <strong>Answer Key:</strong>{" "}
-            {selectedQuiz.answerKeyReleased ? "Released" : "Pending"}
+            {selectedQuiz.ansKeyReleased ? "Released" : "Pending"}
           </p>
           <p>
             <strong>Results:</strong>{" "}
@@ -255,10 +258,13 @@ function HomePage({ email , role}) {
 const styles = {
   container: {
     width: "100%",
-    height: "100%",
+    margin: "20px auto",
     padding: "20px",
-    backgroundColor: "#f5f7fa",
-    fontFamily: "'Inter', sans-serif",
+    backgroundColor: "white",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    // boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+    fontFamily: "Arial, sans-serif",
   },
   gridContainer: {
     display: "grid",

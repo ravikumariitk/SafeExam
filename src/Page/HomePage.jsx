@@ -34,6 +34,9 @@ function HomePage({ email }) {
           setName(data[0].name);
           socketRef.current.emit("get-quiz-data", { quiz: data[0].quiz });
           const toastId = toast.loading("Fetching your data...");
+           setTimeout(() => {
+                      toast.dismiss(toastId);
+                    }, 5000);
           socketRef.current.on("get-quiz-data-failde", () => {
             toast.error("Something went wrong", { id: toastId });
           });
@@ -112,6 +115,9 @@ function HomePage({ email }) {
     console.log(quiz)
     socketRef.current.emit("edit-quiz", { quiz });
     const id = toast.loading("Updating your quiz...");
+     setTimeout(() => {
+                toast.dismiss(id);
+              }, 5000);
     socketRef.current.on("edit-quiz-success", () => {
       toast.success("Quiz Updated", { id });
       setEditQuiz(null);

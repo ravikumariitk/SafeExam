@@ -52,6 +52,9 @@ function SignIn({ oldSocketRef }) {
       };
       socketRef.current.emit("sign-in", data);
       const loadingToastId = toast.loading("Signing in...");
+       setTimeout(() => {
+                  toast.dismiss(loadingToastId);
+                }, 5000);
       socketRef.current.on("sign-in-success", ({ token }) => {
         localStorage.setItem("token", token);
         toast.success("Sign In successfully.", { id: loadingToastId });
