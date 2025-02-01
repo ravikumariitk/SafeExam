@@ -56,7 +56,7 @@ function Home() {
       socketRef.current.on('get-user-data-response', ({ data }) => {
         if (data && data.length > 0) {
           setData(data[0]);
-          console.log(data[0]);
+          console.log("sefwef",data[0]);
           setRoll(data[0].roll);
           setRole(data[0].role);
         } else {
@@ -80,7 +80,6 @@ function Home() {
     <div style={styles.container}>
       <button
           onClick={() => setSideBar(!sideBar)}
-         
         >
           {sideBar ? "<" : ">"}
         </button>
@@ -240,7 +239,7 @@ function Home() {
             </>
           )}
            <button
-                onClick={() => navigate('/signin')}
+                onClick={() => navigate('/')}
                 style={styles.link}
                 onMouseEnter={(e) => {
                   e.target.style.backgroundColor = styles.linkHover.backgroundColor
@@ -257,16 +256,16 @@ function Home() {
       </div>}
 
       <div style={styles.contentArea}>
-        {current === 'home' && role === 'Instructor' && <HomePage email={email} data={data}/>}
-        {current === 'home' && role === 'Student' && <HomePageS email={email} data={data} role = {role}/>}
-        {current === 'takequiz' && <TakeQuiz email={email} roll={roll} />}
-        {current === 'result' && <PersonalResult email={email} data={data.quiz} />}
-        {current === 'get-anskey' && <GetAnsKey data= {data.quiz}/>}
-        {current === 'createquiz' && <QuizForm email={email} />}
-        {current === 'release-anskey' && <AnsKey data={data.quiz} />}
-        {current === 'get-response' && <Response data = {data.quiz} />}
-        {current === 'class-result' && <ClassResult data = {data.quiz} />}
-        {current === 'release-result' && <ReleaseResult data = {data.quiz}/>}
+        {current === 'home' && role === 'Instructor' && <HomePage email={email} data={data.quiz} parentSocketRef = {socketRef}/>}
+        {current === 'home' && role === 'Student' && <HomePageS email={email} data={data.quiz} role = {role} parentSocketRef = {socketRef} />}
+        {current === 'takequiz' && <TakeQuiz email={email} roll={roll} parentSocketRef = {socketRef} />}
+        {current === 'result' && <PersonalResult email={email} data={data.quiz} parentSocketRef = {socketRef} />}
+        {current === 'get-anskey' && <GetAnsKey data= {data.quiz} parentSocketRef = {socketRef} />}
+        {current === 'createquiz' && <QuizForm email={email}  parentSocketRef = {socketRef} />}
+        {current === 'release-anskey' && <AnsKey data={data.quiz} parentSocketRef = {socketRef} />}
+        {current === 'get-response' && <Response data = {data.quiz} parentSocketRef = {socketRef} />}
+        {current === 'class-result' && <ClassResult data = {data.quiz} parentSocketRef = {socketRef} />}
+        {current === 'release-result' && <ReleaseResult data = {data.quiz} parentSocketRef = {socketRef}/>}
         <Outlet />
       </div>
     </div>

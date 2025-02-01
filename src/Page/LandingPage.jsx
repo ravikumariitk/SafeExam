@@ -1,102 +1,104 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const LandingPage = () => {
+const QuizApp = () => {
+  const navigate = useNavigate();
+  function getStarted(){
+    navigate('/signup')
+  }
+  function login(){
+    navigate('/signin')
+  }
   return (
     <div style={styles.container}>
-      <section style={styles.heroSection}>
-        <div style={styles.heroText}>
-          <h1 style={styles.mainTitle}>Next Generation <br /> Quizzing</h1>
-          <div style={styles.buttonContainer}>
-            <button style={styles.button}>Login</button>
-            <button style={styles.button}>Get Started</button>
-          </div>
+      <div style={styles.navbar}>
+        <h2>SafeExam</h2>
+        <div>
+          <button style={styles.button} onClick={getStarted}>Get Started</button>
+          <button style={styles.button} onClick={login}>Login</button>
         </div>
-      </section>
-      
-      <section style={styles.whyToUse}>
-        <h2 style={styles.sectionTitle}>Why Choose QuizMaster?</h2>
-        <p>Transform the way quizzes are conducted with AI-driven proctoring, real-time response tracking, and fully customizable exams.</p>
-        <ul style={styles.featureList}>
-          <li>📢 Host engaging quizzes effortlessly</li>
-          <li>📊 Get real-time response insights</li>
-          <li>📝 Manual evaluation for custom grading</li>
-          <li>🔄 Randomized questions & options for fairness</li>
-          <li>🚀 Secure and AI-powered proctoring</li>
-          <li>📥 Export results for deeper analysis</li>
-          <li>✏️ Edit exams on the go</li>
-        </ul>
-      </section>
-      
-      <footer style={styles.footer}>
-        <p>© 2025 QuizMaster. All Rights Reserved.</p>
-      </footer>
+      </div>
+      <div style={styles.mainSection}>
+        <div style={styles.header}>Transform the way exams are conducted</div>
+        <div style={styles.subheader}>
+          AI-driven proctoring, real-time response tracking, and fully customizable exams.
+        </div>
+        <div style={styles.buttonContainer}>
+          <button style={styles.button} onClick={getStarted}>Get Started</button>
+          <button style={styles.button}>Learn More</button>
+        </div>
+      </div>
+      <div style={styles.footer}>
+        <p>© 2025 QuizApp. All rights reserved.</p>
+      </div>
     </div>
   );
 };
 
 const styles = {
   container: {
-    fontFamily: "Arial, sans-serif",
-    textAlign: "center",
-    backgroundColor: "#f4f4f4",
-    minHeight: "100vh",
-  },
-  heroSection: {
+    width: "100vw",
+    marginTop : '0px',
+    height: "94vh",
+    backgroundColor: "white", // Light blue shade
+    color: "#000",
     display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    fontFamily: "Arial, sans-serif",
+  },
+  navbar: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "20px 40px",
+    borderBottom: "2px solid #000",
+  },
+  button: {
+    padding: "10px 20px",
+    border: "none",
+    backgroundColor: "#000",
+    color: "#fff",
+    fontWeight: "bold",
+    cursor: "pointer",
+    borderRadius: "5px",
+    marginLeft: "10px",
+    transition: "transform 0.3s ease, background-color 0.3s ease",
+  },
+  buttonHover: {
+    transform: "scale(1.1)",
+    backgroundColor: "#0056b3",
+  },
+  mainSection: {
+    width: "100%",
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "50vh",
-    backgroundColor: "#6200ea",
-    color: "white",
-    padding: "20px",
-    textAlign: "left",
+    textAlign: "center",
   },
-  heroText: {
+  header: {
+    fontSize: "48px",
+    fontWeight: "bold",
+    marginBottom: "10px",
+  },
+  subheader: {
+    fontSize: "18px",
     maxWidth: "600px",
-  },
-  mainTitle: {
-    fontSize: "3.5em",
     marginBottom: "20px",
   },
   buttonContainer: {
     display: "flex",
     gap: "15px",
   },
-  button: {
-    backgroundColor: "#03dac6",
-    color: "black",
-    border: "none",
-    padding: "12px 24px",
-    fontSize: "1.2em",
-    cursor: "pointer",
-    borderRadius: "5px",
-    transition: "background 0.3s ease",
-  },
-  whyToUse: {
-    backgroundColor: "white",
-    padding: "40px 20px",
-    margin: "20px auto",
-    width: "80%",
-    borderRadius: "10px",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-  },
-  sectionTitle: {
-    fontSize: "2em",
-    marginBottom: "15px",
-  },
-  featureList: {
-    listStyleType: "none",
-    padding: "0",
-    fontSize: "1.2em",
-    lineHeight: "1.8",
-  },
   footer: {
-    backgroundColor: "#333",
-    color: "white",
-    padding: "20px",
+    marginTop: "auto",
+    padding: "20px 0",
     textAlign: "center",
-    marginTop: "40px",
+    borderTop: "2px solid #000",
+    width: "100%",
   },
 };
 
-export default LandingPage;
+export default QuizApp;

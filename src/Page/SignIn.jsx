@@ -126,15 +126,6 @@ function SignIn({ oldSocketRef }) {
           </button>
         </form>
 
-        <div class="social-login">
-          <p>Or continue with</p>
-          <div class="social-buttons">
-            <div class="social-btn">G</div>
-            <div class="social-btn">A</div>
-            <div class="social-btn">F</div>
-          </div>
-        </div>
-
         <div class="signup-link">
           <p>
             Don't have an account? <Link to="/signup">Sign up</Link>

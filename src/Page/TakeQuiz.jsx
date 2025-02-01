@@ -381,7 +381,7 @@ function TakeQuiz({ email, roll }) {
             </div>
             {passwordProtection && (
               <div style={styles.innerContainer}>
-                This is en password protected quiz enter password to procced
+                This is a password protected quiz enter password to procced
                 :&nbsp;
                 <input
                   type="text"

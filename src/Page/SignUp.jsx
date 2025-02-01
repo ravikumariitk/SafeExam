@@ -5,6 +5,7 @@ import "./SignIn.css";
 
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
+
 function SignUp() {
   const socketRef = useRef(null);
   const [name, setName] = useState("");
@@ -149,15 +150,6 @@ function SignUp() {
             Sign Up
           </button>
         </form>
-
-        <div class="social-login">
-          <p>Or continue with</p>
-          <div class="social-buttons">
-            <div class="social-btn">G</div>
-            <div class="social-btn">A</div>
-            <div class="social-btn">F</div>
-          </div>
-        </div>
 
         <div class="signup-link">
           <p>

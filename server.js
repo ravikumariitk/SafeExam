@@ -10,6 +10,7 @@ const { Quiz, Ans, Result, AnsKey, User } = models;
 import mongoose from 'mongoose'
 import multer from 'multer';
 import { google } from 'googleapis';
+import {mailer} from './mailer.js'
 import fs from 'fs';
 import dotenv from 'dotenv'
 dotenv.config()
@@ -214,8 +215,20 @@ io.on('connection', (socket) => {
   socket.on('ans-key', async ({ id, answers }) => {
     console.log({ id, answers })
     const oldNasKey = await AnsKey.findOne({ id: id });
+    const users = await User.find({quiz:{$in : [id]} , role : "Student"});
+    const quiz= await Quiz.findOne({id:id});
+      console.log("UserData :", users)
     if (oldNasKey) {
-      await Ans.updateOne({ id: id }, { $set: { answers: answers } })
+      await AnsKey.updateOne({ id: id }, { $set: { answers: answers } })
+      users.forEach((user)=>{
+        const mailData = {
+          reason : 'ans-key-update',
+          quizTitle : quiz.title,
+          name: user.name
+        }
+        mailer(user.email, mailData)
+      })
+      socket.emit('ans-key-success');
     } else {
       const ansKey = new AnsKey({
         id: id,
@@ -224,10 +237,19 @@ io.on('connection', (socket) => {
       await Quiz.updateOne({ id: id }, { $set: { ansKeyReleased: true } });
       ansKey.markModified('ansKeyReleased');
       await ansKey.save().then(() => {
+        users.forEach((user)=>{
+          const mailData = {
+            reason : 'ans-key',
+            quizTitle : quiz.title,
+            name: user.name
+          }
+          mailer(user.email, mailData)
+        })
       socket.emit('ans-key-success');
       }).catch((err) => {
         console.log(err)
       });
+      
     }
   })
 
@@ -267,6 +289,7 @@ io.on('connection', (socket) => {
       const questions = quiz.questions;
       let scores = {};
       for (const response of responses) {
+        const email = response.email;
         let score = 0;
         response.answers = response.answers.map((answerObj, questionIndex) => {
           const sanitizedAnswer = {};
@@ -275,7 +298,6 @@ io.on('connection', (socket) => {
               sanitizedAnswer[key] = answerObj[key];
             }
           });
-
           const userAnswer = Object.values(sanitizedAnswer);
           const question = questions[questionIndex];
           const correctAnswer = ansKey.answers[questionIndex];
@@ -309,13 +331,21 @@ io.on('connection', (socket) => {
             marks: marks,
           };
         });
-
         try {
           await response.save();
         } catch (error) {
           console.error('Error saving response for roll:', response.roll, error);
         }
         scores[response.roll] = score;
+        const tempUser = await User.findOne({email : email})
+        const tempQuiz = await Quiz.findOne({id:id})
+        const mailData = {
+          reason : 'result',
+          name: tempUser.name,
+          score: score,
+          quizTitle : tempQuiz.title
+       }
+       mailer(email, mailData)
       }
       console.log(scores);
       const oldResult = await Result.findOne({ id: id })
@@ -329,6 +359,7 @@ io.on('connection', (socket) => {
           scores: scores,
         });
         await scoreData.save();
+        
         socket.emit('release-result-success');
       }
     } catch (error) {
@@ -383,6 +414,19 @@ io.on('connection', (socket) => {
         console.error("ClassScore not found");
         return;
       }
+      const tempUser = await User.findOne({roll : roll});
+      const tempQuiz = await Quiz.findOne({id:id});
+     
+      const mailData =  {
+        reason : 'mark-change',
+        quizTitle : tempQuiz.title,
+        name : tempUser.name,
+        questionNo : questionNo,
+        status : 'Partially correct',
+        score : ClassScore.scores[roll] + (newScore - oldScore)
+      }
+
+      mailer(tempUser.email, mailData)
 
       ClassScore.scores[roll] = ClassScore.scores[roll] + (newScore - oldScore);
       ClassScore.markModified('scores');
@@ -438,6 +482,19 @@ io.on('connection', (socket) => {
         console.error("ClassScore not found");
         return;
       }
+      const tempUser = await User.findOne({roll : roll});
+      const tempQuiz = await Quiz.findOne({id:id});
+     
+      const mailData =  {
+        reason : 'mark-change',
+        quizTitle : tempQuiz.title,
+        name : tempUser.name,
+        questionNo : questionNo,
+        status : 'Correct',
+        score : ClassScore.scores[roll] + (newScore - oldScore)
+      }
+
+      mailer(tempUser.email, mailData)
       ClassScore.scores[roll] = ClassScore.scores[roll] + (newScore - oldScore);
       ClassScore.markModified('scores');
       console.log("Updated ClassScore:", ClassScore);
@@ -492,7 +549,19 @@ io.on('connection', (socket) => {
         console.error("ClassScore not found");
         return;
       }
+      const tempUser = await User.findOne({roll : roll});
+      const tempQuiz = await Quiz.findOne({id:id});
+     
+      const mailData =  {
+        reason : 'mark-change',
+        quizTitle : tempQuiz.title,
+        name : tempUser.name,
+        questionNo : questionNo,
+        status : 'Incorrect',
+        score : ClassScore.scores[roll] + (newScore - oldScore)
+      }
 
+      mailer(tempUser.email, mailData)
       ClassScore.scores[roll] = ClassScore.scores[roll] + (newScore - oldScore);
       console.log("Updated ClassScore:", ClassScore);
       ClassScore.markModified('scores');

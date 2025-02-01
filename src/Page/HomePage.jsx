@@ -4,15 +4,14 @@ import { initSocket } from "../socket";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 
-// Configure the root app element for accessibility
 Modal.setAppElement("#root");
 
 function HomePage({ email }) {
   const socketRef = useRef(null);
   const [name, setName] = useState("");
   const [quizData, setQuizData] = useState([]);
-  const [editQuiz, setEditQuiz] = useState(null); // State for the quiz to edit
-  const [selectedQuiz, setSelectedQuiz] = useState(null); // State for the selected quiz
+  const [editQuiz, setEditQuiz] = useState(null);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +36,7 @@ function HomePage({ email }) {
            setTimeout(() => {
                       toast.dismiss(toastId);
                     }, 5000);
-          socketRef.current.on("get-quiz-data-failde", () => {
+          socketRef.current.on("get-quiz-data-failed", () => {
             toast.error("Something went wrong", { id: toastId });
           });
           socketRef.current.on("get-quiz-data-response", ({ data }) => {
@@ -61,7 +60,7 @@ function HomePage({ email }) {
   }, [email, navigate]);
 
   const handleQuizClick = (quiz) => {
-    setSelectedQuiz(quiz); // Set the selected quiz to open in a modal
+    setSelectedQuiz(quiz);
   };
   const handleEditQuiz = (quiz) => {
     console.log(quiz);
@@ -70,17 +69,15 @@ function HomePage({ email }) {
   };
 
   const closeModal = () => {
-    setSelectedQuiz(null); // Close the modal
+    setSelectedQuiz(null);
   };
   const closeEditModal = () => {
-    setEditQuiz(null); // Close the modal
+    setEditQuiz(null);
   };
 
   function convertToNormalTime(isoTime) {
-    // Create a Date object from the ISO string
     const date = new Date(isoTime);
 
-    // Options for formatting the date and time
     const options = {
       weekday: "long",
       year: "numeric",
@@ -89,18 +86,17 @@ function HomePage({ email }) {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-      hour12: true, // For 12-hour format with AM/PM
+      hour12: true,
       timeZoneName: "short",
     };
 
-    // Format the date using toLocaleString
     return date.toLocaleString("en-US", options);
   }
 
   function getStatus(startTime, endTime) {
-    const now = new Date(); // Current time
-    const start = new Date(startTime); // Convert start time to Date object
-    const end = new Date(endTime); // Convert end time to Date object
+    const now = new Date(); 
+    const start = new Date(startTime);
+    const end = new Date(endTime);
 
     if (now < start) {
       return "Yet to Start";
