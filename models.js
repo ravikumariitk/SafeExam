@@ -90,13 +90,19 @@ const userSchema = new mongoose.Schema({
     quiz: { type: Array, require: true },
 });
 
+const optSchema = new mongoose.Schema({
+  email : String,
+  otp : String
+})
+
 const Quiz = mongoose.model('Quiz', quizSchema);
 const Ans = mongoose.model('answers', answerSchema);
 const Result = mongoose.model('result', resultSchema);
 const AnsKey = mongoose.model('anskey', ansKeySchema);
 const User = mongoose.model('user', userSchema);
+const Otp = mongoose.model('opt', optSchema)
 
 
 
 // Export the model
-export default { Quiz, Ans, Result, AnsKey, User };
+export default { Quiz, Ans, Result, AnsKey, User, Otp };

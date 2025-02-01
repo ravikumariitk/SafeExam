@@ -111,9 +111,9 @@ function SignIn({ oldSocketRef }) {
               <input type="checkbox" id="remember" />
               <label for="remember">Remember me</label>
             </div>
-            <a href="#" class="forgot-password">
+            <Link to="/forget" class="forgot-password">
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           <button

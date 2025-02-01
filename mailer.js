@@ -95,6 +95,23 @@ if(mailData.reason === 'ans-key-update'){
     `
 }
 
+if(mailData.reason === 'signup'){
+    mailDetails.subject = `OTP Verification | ExamSafe`
+        mailDetails.html = `
+        <div style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <div style="background-color: #ffffff; padding: 30px; border-radius: 10px;">
+        <p style="color: #555; font-size: 16px; line-height: 1.5;">
+            Otp for the verification : ${mailData.otp}, and will be valid for 2 min.
+        </p>
+    </div>
+    <p style="text-align: center; font-size: 14px; color: #777; margin-top: 30px;">
+        &copy; 2025 SafeExam. All Rights Reserved.
+    </p>
+</div>
+    `
+}
+
+
 
 
     mailTransporter

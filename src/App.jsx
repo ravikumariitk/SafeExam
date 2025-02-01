@@ -18,7 +18,7 @@ import SignIn from "./Page/SignIn";
 import GetAnsKey from "./Page/GetAnsKey";
 import { Toaster } from "react-hot-toast";
 import LandingPage from "./Page/LandingPage";
-
+import Forget from "./Page/Forget";
 function App() {
   return (
     <>
@@ -48,6 +48,7 @@ function App() {
           <Route path="release" element={<ReleaseResult />} />
           <Route path="signup" element={<SignUp />} />
           <Route path="signin" element={<SignIn />} />
+          <Route path="forget" element={<Forget />} />
         </Routes>
       </BrowserRouter>
     </>

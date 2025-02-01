@@ -1,4 +1,5 @@
 import express from 'express';
+
 const app = express();
 import http from 'http';
 import jwt from 'jsonwebtoken'
@@ -6,7 +7,7 @@ import { Server } from 'socket.io'
 const server = http.createServer(app);
 const io = new Server(server);
 import models from './models.js';
-const { Quiz, Ans, Result, AnsKey, User } = models;
+const { Quiz, Ans, Result, AnsKey, User , Otp} = models;
 import mongoose from 'mongoose'
 import multer from 'multer';
 import { google } from 'googleapis';
@@ -33,10 +34,57 @@ const connectToMongoDB = async () => {
 };
 connectToMongoDB();
 
+function generateOTP() {
+  const otp = Math.floor(10000 + Math.random() * 90000);
+  return otp;
+}
 
 io.on('connection', (socket) => {
 
   console.log('socket connected', socket.id);
+  socket.on('send-otp',async ({email})=>{
+     const oldOTP =  await Otp.findOne({email : email});
+     const otp = generateOTP();
+     if(oldOTP){
+      await Otp.updateOne({email : email},{$set:{otp:otp}});
+     }else{
+      const newOtp = new Otp({email : email, otp : otp});
+      await newOtp.save();
+     }
+     const mailData = {
+      reason : 'signup',
+      otp : otp
+     }
+     mailer(email,mailData)
+     socket.emit('otp-sent');
+  })
+
+  socket.on('verify-otp',async ({email,otp})=>{
+    const token =  await Otp.findOne({email : email});
+    if(token){
+      if(token.otp === otp){
+        console.log('OTP verified successfully');
+        await Otp.deleteMany({email : email})
+        socket.emit('otp-verified');
+        }else{
+          console.log('Invalid OTP');
+          socket.emit('invalid-otp');
+          }
+          }else{
+            console.log('No OTP found for this email');
+            socket.emit('no-otp-found');
+            }
+  })
+
+  socket.on('update-password',async ({email,password})=>{
+    const user = await User.findOne({email : email})
+    if(user){
+      user.password = password
+      user.save()
+      socket.emit('password-updated');
+      }
+  })
+
   socket.on('publish', async ({
     id,
     questions,

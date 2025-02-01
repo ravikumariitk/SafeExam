@@ -13,6 +13,9 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [roll, setRoll] = useState("null");
   const [role, setRole] = useState("Instructor");
+  const [otp,setOtp] = useState('')
+  const [verified , setVerified] = useState(false)
+  const [otpSend, setOtpSend] = useState(false)
   const navigate = useNavigate();
   useEffect(() => {
     async function init() {
@@ -46,6 +49,37 @@ function SignUp() {
   }, [socketRef]);
 
   function handleSubmit(e) {
+    if(! verified && !otpSend){
+      e.preventDefault();
+      if(!email) toast.error("Enter email to verify.");
+      else{
+      const toastId = toast.loading("Sending OTP...")
+      socketRef.current.emit('send-otp',{email})
+      socketRef.current.on('otp-sent',()=>{
+        toast.success('OTP sent to your email.',{id:toastId});
+        setOtpSend(true);
+      })
+    }
+  }
+    else if(!verified){
+      e.preventDefault();
+      if(!otp) {
+        toast.error("Enter OTP to verify.");
+      }
+      else{
+        const data = { email: email, otp: otp };
+        socketRef.current.emit("verify-otp", data);
+        const toastId = toast.loading("Verifying...")
+        socketRef.current.on("otp-verified", () => {
+          toast.success("OTP verified successfully.", { id: toastId });
+          setVerified(true);
+        })
+        socketRef.current.on("invalid-otp", () => {
+          toast.error("OTP verified Failed.", { id: toastId });
+        })
+      }
+    }
+    else{
     e.preventDefault();
     if ((!name && !email) || !password) {
       toast.error("Please fill all the fields");
@@ -71,6 +105,7 @@ function SignUp() {
       });
     }
   }
+}
   return (
     <>
       <div class="login-card">
@@ -140,6 +175,20 @@ function SignUp() {
               <br />
             </>
           )}
+          
+          { otpSend && <div class="form-group">
+          <label for="email">OTP</label>
+            <input
+              type="email"
+              id="email"
+              placeholder=""
+              autoComplete="email"
+              required
+              onChange={(e) => {
+                setOtp(e.target.value);
+              }}
+            />
+          </div>}
 
           <button
             type="submit"
@@ -147,7 +196,7 @@ function SignUp() {
             id="loginButton"
             onClick={handleSubmit}
           >
-            Sign Up
+            {verified ? "Sign Up" : (otpSend? "Verify otp": "Send otp")}
           </button>
         </form>
 
