@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { initSocket } from "../socket";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
-
+import Modal from "react-modal";
+import Generator from "./Generator";
 const QuizForm = ({email}) => {
   // const { email } = useParams();
   const [questions, setQuestions] = useState([]);
@@ -19,6 +20,7 @@ const QuizForm = ({email}) => {
   const [password, setPassword] = useState('null')
   const [gradeVisibility, setGradeVisibility] = useState(false);
   const socketRef = useRef(null);
+  const [ai, setAI] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState({
     type: "multiple-choice",
     statement: "",
@@ -82,6 +84,10 @@ const QuizForm = ({email}) => {
     }
   };
 
+  const generate = () =>{
+    setAI(true)
+  }
+
   const deleteQuestion = (index) => {
     const updatedQuestions = questions.filter((_, i) => i !== index);
     setQuestions(updatedQuestions);
@@ -137,7 +143,9 @@ const QuizForm = ({email}) => {
       if (socketRef.current) socketRef.current.disconnect();
     };
   }, []);
-
+  const closeModal = () =>{
+    setAI(false)
+  }
   return (
     <div style={styles.quizForm}>
       <h1 style={styles.heading}>Create a Quiz</h1>
@@ -358,6 +366,43 @@ const QuizForm = ({email}) => {
       onClick={addQuestion}>
         Add Question
       </button>
+      &nbsp;
+
+{ai && (
+        <Modal
+          isOpen={!!ai}
+          onRequestClose={closeModal}
+          contentLabel="Quiz Details"
+          style={{
+            overlay: styles.modalOverlay,
+            content: styles.modalContent,
+          }}
+        >
+         <Generator questions = {questions} setQuestions = {setQuestions} ></Generator>
+          &nbsp;
+          <button
+            onClick={closeModal}
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = "#005a4c")}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = "#00796b")}
+          >
+            Close
+          </button>
+        </Modal>
+      )}
+      <button style={styles.link} onClick={generate}
+       onMouseEnter={(e) => {
+        e.target.style.backgroundColor = styles.linkHover.backgroundColor
+        e.target.style.color = styles.linkHover.color
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.backgroundColor = styles.link.backgroundColor
+        e.target.style.color = styles.link.color
+      }}
+      >
+        Generate questions using AI
+      </button>
+
       &nbsp;
       <button style={styles.link} onClick={Publish}
        onMouseEnter={(e) => {

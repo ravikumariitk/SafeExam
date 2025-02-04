@@ -21,7 +21,7 @@ const QuizApp = () => {
       <div style={styles.mainSection}>
         <div style={styles.header}>Transform the way exams are conducted</div>
         <div style={styles.subheader}>
-          AI-driven proctoring, real-time response tracking, and fully customizable exams.
+          AI-driven proctoring, real-time response tracking, AI-generated questions, and fully customizable exams.
         </div>
         <div style={styles.buttonContainer}>
           <button style={styles.button} onClick={getStarted}>Get Started</button>

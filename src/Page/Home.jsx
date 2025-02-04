@@ -13,6 +13,7 @@ import HomePage from './HomePage';
 import { useLocation } from "react-router-dom";
 import toast from 'react-hot-toast'
 import HomePageS from './HomePageS';
+import Generator from './Generator';
 
 function Home() {
   const [current, setCurrent] = useState('home');
@@ -262,6 +263,7 @@ function Home() {
         {current === 'result' && <PersonalResult email={email} data={data.quiz} parentSocketRef = {socketRef} />}
         {current === 'get-anskey' && <GetAnsKey data= {data.quiz} parentSocketRef = {socketRef} />}
         {current === 'createquiz' && <QuizForm email={email}  parentSocketRef = {socketRef} />}
+        {/* {current === 'createquiz-ai' && <Generator email={email}  parentSocketRef = {socketRef} />} */}
         {current === 'release-anskey' && <AnsKey data={data.quiz} parentSocketRef = {socketRef} />}
         {current === 'get-response' && <Response data = {data.quiz} parentSocketRef = {socketRef} />}
         {current === 'class-result' && <ClassResult data = {data.quiz} parentSocketRef = {socketRef} />}
