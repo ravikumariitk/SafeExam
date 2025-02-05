@@ -3,16 +3,17 @@ import pdfToText from 'react-pdftotext';
 import axios from 'axios';
 import toast from 'react-hot-toast'
 function Generator({questions, setQuestions}) {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('')
+  const [difficulty, setDifficulty] = useState(5);
   const [aiResponse, setAiResponse] = useState([]);
-  const [correctMarks, setCorrectMarks] = useState(0)
-  const [incorrectMarks, setInCorrectMarks] = useState(0)
-  const [partialMarks, setPartialMarks] = useState(0)
-  const [time,setTime] = useState(0);
+  const [correctMarks, setCorrectMarks] = useState(4)
+  const [incorrectMarks, setInCorrectMarks] = useState(-2)
+  const [partialMarks, setPartialMarks] = useState(2)
+  const [time,setTime] = useState(10);
   const [mcq,setMcq] = useState(0);
   const[sub, setSub] = useState(0);
   async function getAIResponse(text) {
-    const message = `Based on the following text : ${text} generate ${mcq} MCQ with multiple correct with options and ${sub} subjective questions. return me an array of object of type { [ type : "mcq" or "subjective" question : "" , options : [ {text : "" , correct :"" } ] ] }`;
+    const message = `Based on the following text : ${text} generate ${mcq} MCQ with multiple correct with options and ${sub} subjective questions with difficulty level of ${difficulty} where 1 means very hard and 10 means very hard. return me an array of object of type { [ type : "mcq" or "subjective" question : "" , options : [ {text : "" , correct :"" } ] ] }`;
     try {
       const apiRequestBody = {
         contents: [
@@ -66,7 +67,7 @@ function Generator({questions, setQuestions}) {
             toast.success("Questions Successfully Generated.",{id:id})
         });
         })
-        .catch((error) => {console.error("Failed to extract text from pdf")
+        .catch((error) => {console.error("Failed to extract text from pdf",error)
             toast.error("Something went wrong! please try again.",{id:id});
         });
     }
@@ -114,10 +115,10 @@ function Generator({questions, setQuestions}) {
             </li>
           ))}
         </ul>
-           <span> Time : <input style={styles.input} type="number" onChange={(e)=>{setTime(e.target.value)}}  /> seconds &nbsp; &nbsp; &nbsp;
-            Correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setCorrectMarks(e.target.value)}}  />&nbsp; &nbsp; &nbsp;
-            Incorrect Marks : <input style={styles.input} type="number" onChange={(e)=>{setInCorrectMarks(e.target.value)}}  />&nbsp; &nbsp; &nbsp;
-            Partially correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setPartialMarks(e.target.value)}}  /> </span>
+           <span> Time : <input style={styles.input} type="number" onChange={(e)=>{setTime(e.target.value)}}  defaultValue={time} /> seconds &nbsp; &nbsp; &nbsp;
+            Correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setCorrectMarks(e.target.value)}} defaultValue={correctMarks}  />&nbsp; &nbsp; &nbsp;
+            Incorrect Marks : <input style={styles.input} type="number" onChange={(e)=>{setInCorrectMarks(e.target.value)}}  defaultValue={incorrectMarks}/>&nbsp; &nbsp; &nbsp;
+            Partially correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setPartialMarks(e.target.value)}}  defaultValue={partialMarks} /> </span>
       </div>
     );
   };
@@ -127,10 +128,10 @@ function Generator({questions, setQuestions}) {
       <div key={subjective.question}>
         <h4>{subjective.question}</h4>
         {/* <textarea rows="4" cols="50" placeholder="Your answer here..." /> */}
-        <span> Time : <input style={styles.input} type="number" onChange={(e)=>{setTime(e.target.value)}}  /> seconds
-            Correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setCorrectMarks(e.target.value)}}  />
-            Incorrect Marks : <input style={styles.input} type="number" onChange={(e)=>{setInCorrectMarks(e.target.value)}}  />
-            Partially correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setPartialMarks(e.target.value)}}  /> </span>
+        <span> Time : <input style={styles.input} type="number" onChange={(e)=>{setTime(e.target.value)}}  defaultValue={time} /> seconds
+            Correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setCorrectMarks(e.target.value)}} defaultValue={correctMarks}  />
+            Incorrect Marks : <input style={styles.input} type="number" onChange={(e)=>{setInCorrectMarks(e.target.value)}} defaultValue={incorrectMarks} />
+            Partially correct Marks : <input style={styles.input} type="number" onChange={(e)=>{setPartialMarks(e.target.value)}}  defaultValue={partialMarks} /> </span>
       </div>
 
     );
@@ -141,6 +142,7 @@ function Generator({questions, setQuestions}) {
       <h2>Upload PDF </h2>
       No. of multiple choice questions : <input type="number" onChange={(e)=>setMcq(e.target.value)}  /> &nbsp; &nbsp;
       No. of Subjective questions: <input type="number" onChange={(e)=>setSub(e.target.value)}  />&nbsp; &nbsp;
+      Difficulty : {difficulty} < input type="range" min = '1' max = '10' defaultValue='5' onChange = {(e)=>setDifficulty(e.target.value)} />
       <input type="file" accept="application/pdf" onChange={handleFileChange} />
       {/* <button onclick={()=>{generate}} style={styles.Button} >Generate</button> */}
       {aiResponse.length > 0 && (

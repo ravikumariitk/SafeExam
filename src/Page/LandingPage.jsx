@@ -52,7 +52,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     padding: "20px 40px",
-    borderBottom: "2px solid #000",
+    // borderBottom: "2px solid #000",
   },
   button: {
     padding: "10px 20px",
@@ -96,7 +96,7 @@ const styles = {
     marginTop: "auto",
     padding: "20px 0",
     textAlign: "center",
-    borderTop: "2px solid #000",
+    // borderTop: "2px solid #000",
     width: "100%",
   },
 };
