@@ -21,6 +21,14 @@ app.use(cors());
 app.use(cors({
   origin: 'http://localhost:5173'
 }));
+
+app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
 const connectToMongoDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
