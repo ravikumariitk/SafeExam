@@ -142,7 +142,7 @@ function TakeQuiz({ email, roll }) {
       formData.append("email", email);
       formData.append("id", id);
       const response = await axios.post(
-        "http://localhost:5000/upload",
+        "https://safeexam.onrender.com/upload",
         formData,
         {
           headers: {
