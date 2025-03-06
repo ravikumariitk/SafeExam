@@ -15,6 +15,7 @@ import {mailer} from './mailer.js'
 import fs from 'fs';
 import dotenv from 'dotenv'
 dotenv.config()
+import path from 'path'
 app.use(express.static('build'));
 import cors  from 'cors';
 app.use(cors());
