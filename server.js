@@ -20,7 +20,7 @@ app.use(express.static('build'));
 import cors  from 'cors';
 app.use(cors());
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: 'https://safe-exam.onrender.com/'
 }));
 
 import { fileURLToPath } from "url";
